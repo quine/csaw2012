@@ -224,7 +224,7 @@ http.createServer(function (req, res) {
         //Log requests
         logger.info(req.connection.remoteAddress + " - " + "\"" + req.method + " " + req.url + "\" " + res.statusCode);
     }
-    else if(req.url == "/key" || req.url == "/key.txt") {
+    else if(require('path').basename(require('url').parse(req.url).pathname) ==  "key" || require('path').basename(require('url').parse(req.url).pathname) == "key.txt") {
         //NO KEY FOR YOU!
         res.writeHead(200);
         res.end("So close, but no derp.");
