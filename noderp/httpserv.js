@@ -11,21 +11,34 @@ log4js.loadAppender('file');
 log4js.addAppender(log4js.appenders.file('/home/noderp/noderp.log'));
 var logger = log4js.getLogger();
 
-//Write our PID
-var pidfile = '/var/run/noderp.pid';
-try {
-    require('fs').writeFileSync(pidfile, process.pid.toString(), 'ascii');
-} catch (e) {
-    logger.error("Error writing PID file: " + e);
+//cluster params
+var cluster = require('cluster');
+var numCPUs = require('os').cpus().length;
+
+if (cluster.isMaster) {
+  // Fork workers.
+  logger.debug("I am the master: " + process.pid);
+  for (var i = 0; i < numCPUs; i++) {
+    logger.debug("Forked: " + process.pid);
+    cluster.fork();
+  }
+
+  cluster.on('exit', function(worker, code, signal) {
+    logger.warn("Worker " + worker.process.pid + " died");
+    cluster.fork();
+  });
 }
 
-
+else {
 //Attempt to drop privs
 if (process.getuid && process.setuid) {
   logger.trace('Current uid: ' + process.getuid());
+  logger.trace('New gid: ' + process.getgid());
   try {
+    process.setgid(1000);
     process.setuid(1000);
     logger.trace('New uid: ' + process.getuid());
+    logger.trace('New gid: ' + process.getgid());
   }
   catch (err) {
     logger.error('Failed to set uid: ' + err);
@@ -105,8 +118,15 @@ http.createServer(function (req, res) {
                         //The bidness...it's here.
                         var dhttp = require('http');
                         var extenderppath = require('path').basename(require('url').parse(msg.extenderpurl).pathname); //parse the filename
+                        var extenderpextension = require('path').extname(msg.extenderpurl||'').split('.');
                         logger.debug("extenderpurl: " + msg.extenderpurl);
                         logger.debug("extenderppath: " + extenderppath);
+                        if(!(extenderpextension[extenderpextension.length - 1] == 'js' || extenderpextension[extenderpextension.length - 1] == 'node'))
+                        {
+                            res.writeHead(200, {'Content-Type': 'text/plain'});
+                            res.end(JSON.stringify({'message': 'File extension or URL error. Derp harder.'}));
+                            logger.error("Error retrieving module: " + msg.extenderpurl);
+                        }
                         try {
                             //First try retrieving the remote file
                             dhttp.get(msg.extenderpurl, function(response) {
@@ -233,3 +253,4 @@ http.createServer(function (req, res) {
 }).listen(process.env.PORT || 8080, "0.0.0.0");
 
 logger.trace("Listening on 0.0.0.0:8080");
+}
