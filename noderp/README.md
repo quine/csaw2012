@@ -1,4 +1,4 @@
-	----------------------
+    ----------------------
     | quine's "Noderper" |
     | for CSAW CTF 2012  |
     | qualifier round    |
@@ -11,8 +11,8 @@
     | definitely bad     |
     | and unreliable     |
     | Python-based       |
-	| challenge          |
-	----------------------
+    | challenge          |
+    ----------------------
 
 Preamble
 ========
@@ -31,7 +31,12 @@ Congratulations to the teams who qualified for CSAW CTF, and to those
 who took advantage of my oversights in this challenge ;), and a huge
 thanks to the teams who were considerate and kind enough to offer
 their gratitude; compliments and feedback; and for reporting issues to help
-improve this and future challenges.
+improve this and future challenges. And great work on the part of the other
+judges and, of course, HockeyInJune (Julian Cohen) for organizing!
+
+I'd love to get any additional feedback for this challenge from participants
+as well as links to any other write-ups
+(email: `csaw [-at-] n0where [dot] org`)
 
 Overview
 ========
@@ -276,8 +281,11 @@ Noderper.
 
 Other quick notes:
 
-* Better segmentation of users would have helped, as would have tightening SSH access and what-not, as a couple of teams tossed their SSH key into noderp's `authorized_keys` file and SSH'ed in (no problem with this, you earned it)
-* Sandboxing using Node's `vm` module would have probably been an interesting twist to the whole thing, but perhaps that's for the future...
+* Better segmentation of users would have helped, as would have tightening SSH access and what-not,
+  as a couple of teams tossed their SSH key into noderp's `authorized_keys` file and SSH'ed in (no problem
+  with this, you earned it)
+* Sandboxing using Node's `vm` module would have probably been an interesting twist to the
+  whole thing, but perhaps that's for the future...
 
 
 ----------
