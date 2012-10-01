@@ -1,5 +1,5 @@
 /*
-noderp v0.1b - CSAW CTF 2012's definitively terrible
+noderper v0.1b - CSAW CTF 2012's definitively terrible
 successor to 2011's Python-based haderp(er)
 
 Author: quine
