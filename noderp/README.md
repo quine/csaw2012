@@ -54,8 +54,9 @@ that will fire an XmlHttpRequest to the `/handler` URL of Noderper.
 In this XHR was a JSON blob, and in there was a parameter specifying the
 `message` (or what to do on the backend), and possibly additional information.
 
+`sendmsg() function in index.html:
+
 ```javascript
-sendmsg()` function in index.html:
 
     function sendMsg(message, extenderpurl) {
         $.ajax({
@@ -127,10 +128,10 @@ but in both cases must conform to Node's standards for exposing/exporting and
 initializing functions):
 
 `extenderp` in index.html:
-
+```html
 	            <a href="#" class="sublink" id="extenderp" title="Test the Extenderp Interface"
 	            extenderpurl="http://127.0.0.1:8080/test/extenderptest.node">Test Extenderp</a>
-
+```
 
 The `extenderptest` module specified in the
 `extenderpurl` attribute should have served as a guide for challengers to
@@ -163,7 +164,7 @@ initialize and export this function, as Noderper is already set to call this
 function upon loading the supplied module. Failure to properly export or 
 initialize this module would result in a vaugely suggestive error being
 returned.
-
+```cpp
 	// extenderptest.cc
 	
     #include <node.h>
@@ -181,24 +182,24 @@ returned.
     }
 
     NODE_MODULE(extenderptest, init);
-
+```
 As it turns out, a mistake/oversight in the URL check test facilitated a
 fairly simple traversal vuln -- challengers couldn't request `/key` or
 `/key.txt`, but *could* request `/./key` and retrieve the keyfile that way:
-
+```javascript
     else if(req.url ==  "/key" || req.url == "/key.txt") {
         //NO KEY FOR YOU!
         res.writeHead(200);
         res.end("So close, but no derp.");
-
+```
 This was fixed about halfway through the competition:
-
+```javascript
     else if(require('path').basename(require('url').parse(req.url).pathname) ==  "key" || 
         require('path').basename(require('url').parse(req.url).pathname) == "key.txt") {
         //NO KEY FOR YOU!
         res.writeHead(200);
         res.end("So close, but no derp.");
-
+```
 Some of the team write-ups mention this as their vector, though some also
 combined the RFI with the directory traversal.
 
@@ -221,17 +222,17 @@ starting the service at boot time, as well as restarting it in the event of a
 crash (see *Caveats*). Originally, Noderper was set to drop privileges upon
 startup, to the **noderp** user. One team noted that there was an oversight in
 dropping supplemental group membership in Noderper's startup (only `setuid`-ing):
-
+```javascript
     process.setuid(1000);
     logger.trace('New uid: ' + process.getuid());
-
+```
 This was fixed later, to setgid() as well:
-
+```javascript
     process.setgid(1000);
     process.setuid(1000);
     logger.trace('New uid: ' + process.getuid());
     logger.trace('New gid: ' + process.getgid());
-
+```
 though it ultimately didn't matter, as later the systemd service configuration
 was changed to spawn Noderper as the **noderp** user directly.
 
@@ -243,7 +244,7 @@ Consideration was given to using the Cluster module of Node.js, so that one inst
 of the service would be fork()'d for each CPU available, but this was thought to be
 overkill. Additional "real world" QA (i.e. CTF) later reversed this decision; and
 it was added back in:
-
+```javascript
     if (cluster.isMaster) {
       // Fork workers.
       logger.debug("I am the master: " + process.pid);
@@ -257,7 +258,7 @@ it was added back in:
         cluster.fork();
       });
     }
-
+```
 This was due to some challengers' corrupt, invalid, or
 just malicious modules killing Node. This seems to have generally helped; even
 though we were only fork()'ing once, upon death of the child process, the
