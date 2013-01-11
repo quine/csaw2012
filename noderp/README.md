@@ -54,7 +54,8 @@ that will fire an XmlHttpRequest to the `/handler` URL of Noderper.
 In this XHR was a JSON blob, and in there was a parameter specifying the
 `message` (or what to do on the backend), and possibly additional information.
 
-`sendmsg()` function in index.html:
+```javascript
+sendmsg()` function in index.html:
 
     function sendMsg(message, extenderpurl) {
         $.ajax({
@@ -84,13 +85,14 @@ In this XHR was a JSON blob, and in there was a parameter specifying the
             }
         })
     }
-
+```
 This message was then consumed by Noderper to decide what, if anything, to execute.
 For instance, the `uname` link has an attribute that was sent in this XHR
 -- `uname -a` -- that was tested on the backend, and if it matched *exactly*
 that string, Noderper would execute `uname -a` and return stdout in a JSON response.
 If the user attempted to change the link's attribute to, say, `uname -a; someothercommand`,
 the test would fail and they would be greeted with a funny cat GIF:
+```javascript
 
     switch(msg.message) {
         case "uname -a":
@@ -110,7 +112,7 @@ the test would fail and they would be greeted with a funny cat GIF:
             //Fall through to cats
             res.writeHead(200, {'Content-Type': 'text/plain'});
             res.end(JSON.stringify({'file': "<img src=\"cat.gif\">"}));
-
+```
            
 Challenge Goals (or how to "win")
 ---------------------------------
