@@ -36,7 +36,7 @@ judges and, of course, HockeyInJune (Julian Cohen) for organizing!
 
 I'd love to get any additional feedback for this challenge from participants
 as well as links to any other write-ups
-(email: `csaw [-at-] n0where [dot] org`)
+(email: `zach [-a t-] n0where [dot] org`)
 
 Overview
 ========
