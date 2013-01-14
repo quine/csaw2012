@@ -54,7 +54,7 @@ that will fire an XmlHttpRequest to the `/handler` URL of Noderper.
 In this XHR was a JSON blob, and in there was a parameter specifying the
 `message` (or what to do on the backend), and possibly additional information.
 
-`sendmsg() function in index.html:
+`sendmsg()` function in index.html:
 
 ```javascript
 
